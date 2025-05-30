@@ -1,0 +1,8 @@
+  nats-service:
+    build:
+      context: .
+      dockerfile: nats-service/Dockerfile
+    environment:
+      - NATS_URL=nats://nats:4222
+    depends_on:
+      - nats

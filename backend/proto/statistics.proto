@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package proto.statistics;
+option go_package = "proto/statistics";
+
+service StatisticsService {
+  rpc GetMetrics (GetMetricsRequest) returns (GetMetricsResponse);
+}
+
+message GetMetricsRequest {}
+
+message GetMetricsResponse {
+  int32 total_users = 1;
+  int32 total_cars = 2;
+  int32 total_bookings = 3;
+} 

@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package carrental.com.proto.inventory;
+
+option go_package = "carrental.com/proto/inventory";
+
+service InventoryService {
+  rpc AddCar (AddCarRequest) returns (CarResponse);
+  rpc UpdateCar (UpdateCarRequest) returns (CarResponse);
+  rpc DeleteCar (CarIDRequest) returns (DeleteResponse);
+  rpc GetCarByID (CarIDRequest) returns (CarResponse);
+  rpc SearchAvailableCars (SearchRequest) returns (CarListResponse);
+  rpc CheckAvailability (AvailabilityRequest) returns (AvailabilityResponse);
+  rpc UpdateCarStatus (CarStatusRequest) returns (CarResponse);
+  rpc ListCarsByIDs (CarIDListRequest) returns (CarListResponse);
+}
+
+message CreateProductRequest {
+  string name = 1;
+  string category = 2;
+  int32 stock = 3;
+  double price = 4;
+}
+
+message GetProductRequest {
+  int32 id = 1;
+}
+
+message UpdateProductRequest {
+  int32 id = 1;
+  string name = 2;
+  string category = 3;
+  int32 stock = 4;
+  double price = 5;
+}
+
+message DeleteProductRequest {
+  int32 id = 1;
+}
+
+message ListProductsRequest {
+  // Empty for now; can later add filters or pagination
+}
+
+message AdjustStockRequest {
+  int32 product_id = 1;
+  int32 delta = 2; // can be negative (to reduce stock) or positive (to increase)
+}
+
+message ProductResponse {
+  int32 id = 1;
+  string name = 2;
+  string category = 3;
+  int32 stock = 4;
+  double price = 5;
+}
+
+message ListProductsResponse {
+  repeated ProductResponse products = 1;
+}
+
+message Empty {}
+
+// --- Car Rental Inventory Service Messages ---
+
+message AddCarRequest {
+  string make = 1;
+  string model = 2;
+  int32 year = 3;
+  string category = 4;
+  double price_per_day = 5;
+  string location = 6;
+}
+
+message UpdateCarRequest {
+  string car_id = 1;
+  string make = 2;
+  string model = 3;
+  int32 year = 4;
+  string category = 5;
+  double price_per_day = 6;
+  string location = 7;
+}
+
+message CarIDRequest {
+  string car_id = 1;
+}
+
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message CarResponse {
+  string car_id = 1;
+  string make = 2;
+  string model = 3;
+  int32 year = 4;
+  string category = 5;
+  double price_per_day = 6;
+  string location = 7;
+  bool available = 8;
+}
+
+message SearchRequest {
+  string location = 1;
+  string category = 2;
+  string make = 3;
+  string model = 4;
+}
+
+message CarListResponse {
+  repeated CarResponse cars = 1;
+}
+
+message AvailabilityRequest {
+  string car_id = 1;
+  string start_date = 2;
+  string end_date = 3;
+}
+
+message AvailabilityResponse {
+  bool available = 1;
+}
+
+message CarStatusRequest {
+  string car_id = 1;
+  bool available = 2;
+}
+
+message CarIDListRequest {
+  repeated string car_ids = 1;
+}

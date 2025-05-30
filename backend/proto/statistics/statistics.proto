@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package carrental.com.proto.statistics;
+
+option go_package = "carrental.com/proto/statistics";
+
+service StatisticsService {
+  rpc GetBookingStats (BookingStatsRequest) returns (BookingStatsResponse);
+  rpc GetCarStats (CarStatsRequest) returns (CarStatsResponse);
+  rpc GetRevenueStats (RevenueStatsRequest) returns (RevenueStatsResponse);
+  rpc GetPopularLocations (PopularLocationsRequest) returns (PopularLocationsResponse);
+  rpc GetUserStats (UserStatsRequest) returns (UserStatsResponse);
+}
+
+message TimeRange {
+  string start_date = 1;  // ISO 8601 format
+  string end_date = 2;    // ISO 8601 format
+}
+
+message BookingStatsRequest {
+  TimeRange time_range = 1;
+  string location = 2;    // optional
+}
+
+message BookingStatsResponse {
+  int32 total_bookings = 1;
+  int32 active_bookings = 2;
+  int32 completed_bookings = 3;
+  int32 cancelled_bookings = 4;
+  double average_duration = 5;
+  map<string, int32> bookings_by_car_category = 6;
+}
+
+message CarStatsRequest {
+  TimeRange time_range = 1;
+  string category = 2;    // optional
+}
+
+message CarStatsResponse {
+  int32 total_cars = 1;
+  int32 available_cars = 2;
+  double average_utilization = 3;
+  map<string, int32> cars_by_category = 4;
+  repeated MostBookedCar most_booked_cars = 5;
+}
+
+message MostBookedCar {
+  string car_id = 1;
+  string make = 2;
+  string model = 3;
+  int32 booking_count = 4;
+}
+
+message RevenueStatsRequest {
+  TimeRange time_range = 1;
+  string location = 2;    // optional
+}
+
+message RevenueStatsResponse {
+  double total_revenue = 1;
+  double average_revenue_per_booking = 2;
+  map<string, double> revenue_by_category = 3;
+  map<string, double> revenue_by_location = 4;
+  repeated MonthlyRevenue monthly_revenue = 5;
+}
+
+message MonthlyRevenue {
+  string month = 1;       // YYYY-MM format
+  double revenue = 2;
+}
+
+message PopularLocationsRequest {
+  TimeRange time_range = 1;
+  int32 limit = 2;        // number of locations to return
+}
+
+message PopularLocationsResponse {
+  repeated LocationStats locations = 1;
+}
+
+message LocationStats {
+  string location = 1;
+  int32 booking_count = 2;
+  double revenue = 3;
+}
+
+message UserStatsRequest {
+  TimeRange time_range = 1;
+}
+
+message UserStatsResponse {
+  int32 total_users = 1;
+  int32 active_users = 2;
+  double average_bookings_per_user = 3;
+  repeated TopUser top_users = 4;
+}
+
+message TopUser {
+  string user_id = 1;
+  int32 booking_count = 2;
+  double total_spent = 3;
+}

@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package payment;
+
+option go_package = "github.com/vaibhav/ecom/proto;proto";
+
+service PaymentService {
+  rpc ProcessPayment (PaymentRequest) returns (PaymentResponse);
+  rpc GetPaymentStatus (PaymentStatusRequest) returns (PaymentResponse);
+  rpc RefundPayment (RefundRequest) returns (RefundResponse);
+  rpc ListPayments (ListPaymentsRequest) returns (ListPaymentsResponse);
+}
+
+message PaymentRequest {
+  string booking_id = 1;
+  string user_id = 2;
+  double amount = 3;
+  PaymentMethod payment_method = 4;
+  CardDetails card_details = 5;
+}
+
+message PaymentMethod {
+  enum Type {
+    CARD = 0;
+    CASH = 1;
+    UPI = 2;
+  }
+  Type type = 1;
+}
+
+message CardDetails {
+  string card_number = 1;
+  string expiry_month = 2;
+  string expiry_year = 3;
+  string cvv = 4;
+  string holder_name = 5;
+}
+
+message PaymentResponse {
+  string payment_id = 1;
+  string booking_id = 2;
+  string status = 3;
+  double amount = 4;
+  string transaction_id = 5;
+  string created_at = 6;
+  string message = 7;
+}
+
+message PaymentStatusRequest {
+  string payment_id = 1;
+}
+
+message RefundRequest {
+  string payment_id = 1;
+  string reason = 2;
+  double amount = 3;
+}
+
+message RefundResponse {
+  string refund_id = 1;
+  string payment_id = 2;
+  string status = 3;
+  double amount = 4;
+  string created_at = 5;
+}
+
+message ListPaymentsRequest {
+  string user_id = 1;
+  string booking_id = 2;
+  string status = 3;
+  string start_date = 4;
+  string end_date = 5;
+}
+
+message ListPaymentsResponse {
+  repeated PaymentResponse payments = 1;
+}

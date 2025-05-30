@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package carrental.com.proto.user;
+
+option go_package = "carrental.com/proto/user";
+
+
+
+
+service UserService {
+  rpc Register (RegisterRequest) returns (AuthResponse);
+  rpc Login (LoginRequest) returns (AuthResponse);
+  rpc GetUserByID (UserIDRequest) returns (UserResponse);
+  rpc ValidateToken (TokenRequest) returns (ValidateResponse);
+  rpc UpdateProfile (UpdateProfileRequest) returns (UserResponse);
+  rpc DeleteUser (UserIDRequest) returns (DeleteResponse);
+}
+
+message RegisterRequest {
+  string email = 1;
+  string password = 2;
+  string name = 3;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message UserIDRequest {
+  string user_id = 1;
+}
+
+message TokenRequest {
+  string token = 1;
+}
+
+message UpdateProfileRequest {
+  string user_id = 1;
+  string name = 2;
+}
+
+message AuthResponse {
+  string token = 1;
+}
+
+message UserResponse {
+  string user_id = 1;
+  string email = 2;
+  string name = 3;
+  string created_at = 4;
+}
+
+message ValidateResponse {
+  bool valid = 1;
+  string user_id = 2;
+}
+
+message DeleteResponse {
+  string message = 1;
+}

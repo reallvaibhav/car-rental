@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package proto.inventory;
+option go_package = "proto/inventory";
+
+service InventoryService {
+  rpc CreateCar (CreateCarRequest) returns (CreateCarResponse);
+  rpc ListCars (ListCarsRequest) returns (ListCarsResponse);
+}
+
+message CreateCarRequest {
+  string owner_id = 1;
+  string make = 2;
+  string model = 3;
+  int32 year = 4;
+}
+
+message CreateCarResponse {
+  string car_id = 1;
+  string message = 2;
+}
+
+message ListCarsRequest {}
+
+message ListCarsResponse {
+  repeated Car cars = 1;
+}
+
+message Car {
+  string car_id = 1;
+  string owner_id = 2;
+  string make = 3;
+  string model = 4;
+  int32 year = 5;
+} 
