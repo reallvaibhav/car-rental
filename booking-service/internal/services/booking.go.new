@@ -1,0 +1,70 @@
+package services
+
+import (
+	"context"
+	"log"
+	pb "proto/booking"
+
+	"booking-service/internal/repository"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+)
+
+type BookingService interface {
+	CreateBooking(ctx context.Context, req *pb.CreateBookingRequest) (*pb.BookingResponse, error)
+	GetBooking(ctx context.Context, req *pb.GetBookingRequest) (*pb.BookingResponse, error)
+	UpdateBookingStatus(ctx context.Context, req *pb.UpdateBookingStatusRequest) (*pb.BookingResponse, error)
+	ListUserBookings(ctx context.Context, req *pb.ListBookingsRequest) (*pb.ListBookingsResponse, error)
+	CancelBooking(ctx context.Context, req *pb.CancelBookingRequest) (*pb.BookingResponse, error)
+}
+
+type bookingService struct {
+	repo *repository.Repository
+}
+
+func NewBookingService(repo *repository.Repository) BookingService {
+	return &bookingService{repo: repo}
+}
+
+func (s *bookingService) CreateBooking(ctx context.Context, req *pb.CreateBookingRequest) (*pb.BookingResponse, error) {
+	if req.UserId == "" || len(req.Bookings) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "user ID and bookings must be provided")
+	}
+	return s.repo.CreateBooking(ctx, req)
+}
+
+func (s *bookingService) GetBooking(ctx context.Context, req *pb.GetBookingRequest) (*pb.BookingResponse, error) {
+	if req.BookingId == "" {
+		return nil, status.Error(codes.InvalidArgument, "booking ID must be provided")
+	}
+	
+	booking, err := s.repo.GetBookingByID(ctx, req.BookingId)
+	if err != nil {
+		log.Printf("Error getting booking: %v", err)
+		return nil, status.Errorf(codes.NotFound, "booking not found: %v", err)
+	}
+	
+	return repository.BookingModelToProto(booking), nil
+}
+
+func (s *bookingService) UpdateBookingStatus(ctx context.Context, req *pb.UpdateBookingStatusRequest) (*pb.BookingResponse, error) {
+	if req.BookingId == "" || req.Status == "" {
+		return nil, status.Error(codes.InvalidArgument, "booking ID and status must be provided")
+	}
+	return s.repo.UpdateBookingStatus(ctx, req)
+}
+
+func (s *bookingService) ListUserBookings(ctx context.Context, req *pb.ListBookingsRequest) (*pb.ListBookingsResponse, error) {
+	if req.UserId == "" {
+		return nil, status.Error(codes.InvalidArgument, "user ID must be provided")
+	}
+	return s.repo.ListUserBookings(ctx, req)
+}
+
+func (s *bookingService) CancelBooking(ctx context.Context, req *pb.CancelBookingRequest) (*pb.BookingResponse, error) {
+	if req.BookingId == "" {
+		return nil, status.Error(codes.InvalidArgument, "booking ID must be provided")
+	}
+	return s.repo.CancelBooking(ctx, req)
+}

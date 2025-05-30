@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package booking;
+option go_package = "proto/booking";
+
+service BookingService {
+  rpc CreateBooking(CreateBookingRequest) returns (BookingResponse);
+  rpc GetBooking(GetBookingRequest) returns (BookingResponse);
+  rpc ListUserBookings(ListBookingsRequest) returns (ListBookingsResponse);
+  rpc UpdateBookingStatus(UpdateBookingStatusRequest) returns (BookingResponse);
+  rpc CancelBooking(CancelBookingRequest) returns (BookingResponse);
+}
+
+message CreateBookingRequest {
+  string user_id = 1;
+  repeated CarBookingItem bookings = 2;
+}
+
+message CarBookingItem {
+  string car_id = 1;
+  string start_date = 2;
+  string end_date = 3;
+  double price_per_day = 4;
+  int32 total_days = 5;
+}
+
+message GetBookingRequest {
+  string booking_id = 1;
+}
+
+message ListBookingsRequest {
+  string user_id = 1;
+}
+
+message ListBookingsResponse {
+  repeated BookingResponse bookings = 1;
+}
+
+message UpdateBookingStatusRequest {
+  string booking_id = 1;
+  string status = 2;
+}
+
+message CancelBookingRequest {
+  string booking_id = 1;
+}
+
+message BookingResponse {
+  string booking_id = 1;
+  string user_id = 2;
+  repeated CarBookingItem bookings = 3;
+  string status = 4;
+  double total_price = 5;
+}
